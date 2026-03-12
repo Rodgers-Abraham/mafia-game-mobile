@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Mafia Game",
+    "slug": "mafia-game-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0a0005",
+    "splash": {
+      "backgroundColor": "#0a0005"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.rodgersabraham.mafiagame"
+    },
+    "android": {
+      "package": "com.rodgersabraham.mafiagame",
+      "statusBarColor": "#0a0005"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "scheme": "mafia-game",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
