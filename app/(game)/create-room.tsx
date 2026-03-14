@@ -14,29 +14,27 @@ export default function CreateRoom() {
   const [selectedColor, setSelectedColor] = useState(COLORS[0])
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    loadProfile()
-  }, [])
+  useEffect(() => { loadProfile() }, [])
 
   const loadProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
     const { data } = await supabase.from('profiles').select('username, avatar_color').eq('id', user.id).single()
-    if (data) {
-      setPlayerName(data.username)
-      setSelectedColor(data.avatar_color || COLORS[0])
-    }
+    if (data) { setPlayerName(data.username); setSelectedColor(data.avatar_color || COLORS[0]) }
   }
 
   const handleCreate = () => {
     if (!playerName.trim()) { Alert.alert('Error', 'Please enter your name'); return }
     setLoading(true)
-    const socket = io(SERVER_URL)
+    const socket = io(SERVER_URL, { transports: ['websocket'] })
     socket.on('connect', () => {
       socket.emit('create-room', { playerName: playerName.trim(), color: selectedColor }, async (response: any) => {
         if (response.success) {
-          await AsyncStorage.setItem('roomData', JSON.stringify({ playerId: response.playerId, roomId: response.room.id }))
-          await AsyncStorage.setItem('isHost', 'true')
+          await AsyncStorage.setItem('roomData', JSON.stringify({
+            playerId: response.playerId,
+            roomId: response.room.id,
+            room: response.room,
+          }))
           socket.disconnect()
           router.push(`/(game)/room/${response.room.id}`)
         } else {
@@ -61,27 +59,16 @@ export default function CreateRoom() {
 
       <View style={styles.card}>
         <Text style={styles.label}>YOUR NAME</Text>
-        <TextInput
-          style={styles.input}
-          value={playerName}
-          onChangeText={setPlayerName}
-          placeholder="Enter your name..."
-          placeholderTextColor="#444"
-          maxLength={20}
-        />
+        <TextInput style={styles.input} value={playerName} onChangeText={setPlayerName} placeholder="Enter your name..." placeholderTextColor="#444" maxLength={20} />
 
         <Text style={styles.label}>CHOOSE YOUR COLOR</Text>
         <View style={styles.colorGrid}>
           {COLORS.map(color => (
-            <TouchableOpacity
-              key={color}
-              onPress={() => setSelectedColor(color)}
-              style={[styles.colorDot, { backgroundColor: color }, selectedColor === color && styles.colorSelected]}
-            />
+            <TouchableOpacity key={color} onPress={() => setSelectedColor(color)}
+              style={[styles.colorDot, { backgroundColor: color }, selectedColor === color && styles.colorSelected]} />
           ))}
         </View>
 
-        {/* Preview */}
         <View style={styles.preview}>
           <View style={[styles.avatar, { backgroundColor: selectedColor }]}>
             <Text style={styles.avatarText}>{playerName ? playerName[0].toUpperCase() : '?'}</Text>

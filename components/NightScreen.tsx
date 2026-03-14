@@ -18,7 +18,7 @@ const ROLE_INFO: Record<string, { emoji: string; color: string; action: string }
 const MAFIA_ROLES = ['Mafia', 'Godfather']
 const ACTION_ROLES = ['Mafia', 'Godfather', 'Detective', 'Doctor', 'Bodyguard', 'Vigilante', 'RoleBlocker']
 
-export default function NightScreen({ room, playerId, socket, notification, mafiaTeammates }: any) {
+export default function NightScreen({ room, playerId, socket, notification, mafiaTeammates = []}: any) {
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null)
   const [actionSubmitted, setActionSubmitted] = useState(false)
   const [mafiaMessage, setMafiaMessage] = useState('')
